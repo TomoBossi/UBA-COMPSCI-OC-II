@@ -2,19 +2,19 @@
 %define SYS_EXIT 60
 
 section	.data
-msg db '000', 0xA, 0      ; message placeholder
-len equ $ - msg           ; message length (should be 5)
+msg db '000', 0xA         ; message placeholder
+len equ $ - msg           ; message length
 
-op1 db 127                ; operand 1
-op2 db 102                ; operand 2
+op1 db 10                 ; operand 1
+op2 db -200               ; operand 2
 
 section	.text
 	global _start
 
 _start:
-	movzx rsi, byte [op1]
+	movzx rbx, byte [op1]
 	movzx rax, byte [op2]
-	add rax, rsi          ; rax holds the result
+	add al, bl            ; rax holds the result (al and bl are the lower bytes from rax and rbx)
 
 	mov rbx, msg + 3      ; point after '000'
 	mov rsi, 0xA          ; save 10 in rsi, to be used in dividing rax
@@ -22,8 +22,8 @@ _start:
 		dec rbx           ; move to next (more significant) digit
         mov rdx, 0        ; clear rdx for division
         div rsi           ; uint-divide rax by 10, saving quotient in rax and remainder in rdx
-        add rdx, 0x30     ; convert remainder to ASCII character (0x30 is ascii for '0')
-        mov [rbx], rdx    ; store ASCII character
+        add dl, 0x30      ; convert remainder to ASCII character (0x30 is ascii for '0', dl is the lower byte from rdx)
+        mov [rbx], dl     ; store ASCII character
         cmp rax, 0        ; check if quotient is zero
         jnz loop          ; if not zero, continue conversion
 
