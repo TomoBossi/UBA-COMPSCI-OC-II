@@ -5,8 +5,8 @@ section	.data
 msg db '000', 0xA         ; message placeholder
 len equ $ - msg           ; message length
 
-op1 db 10                 ; operand 1
-op2 db -200               ; operand 2
+op1 db 211                ; operand 1
+op2 db 152                ; operand 2
 
 section	.text
 	global _start
