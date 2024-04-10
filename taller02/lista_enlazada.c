@@ -25,8 +25,12 @@ void agregar_al_final(lista_t* lista, uint32_t* arreglo, uint64_t longitud) {
     nodo_t *actual = lista->head;
     nodo_t *nodo = malloc(sizeof(nodo_t)); // 24
     nodo->next = NULL;
-    nodo->arreglo = arreglo;
+    nodo->arreglo = malloc(longitud * sizeof(uint32_t));
     nodo->longitud = longitud;
+    for (uint64_t i = 0; i < longitud; i++) {
+        nodo->arreglo[i] = arreglo[i];
+    }
+
     if (actual == NULL) {
         lista->head = nodo;
     } else {
@@ -97,13 +101,14 @@ int lista_contiene_elemento(lista_t* lista, uint32_t elemento_a_buscar) {
 // Tener en cuenta que ademas, se debe liberar la memoria correspondiente a cada array de cada elemento de la lista.
 void destruir_lista(lista_t* lista) {
     nodo_t *actual = lista->head;
-    free(actual->arreglo); // En los tests, sólo el primer array es dado memoria con calloc... el resto de los arrays van al stack. ¿Por qué? Me encantaría saberlo 
     nodo_t *tmp;
     while (actual->next != NULL) {
         tmp = actual->next;
+        free(actual->arreglo);
         free(actual);
         actual = tmp;
     }
+    free(actual->arreglo);
     free(actual);
     free(lista);
 }

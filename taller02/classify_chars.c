@@ -39,7 +39,10 @@ void classify_chars(classifier_t* array, uint64_t size_of_array) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Devolver el puntero al array de arrays
+// Devolver el puntero a un array de arrays
+// En este caso particular es redundante con el input, ya que uno de los parámetros ya es ese puntero...
+// En un caso más general,se puede armar un array de arrays dentro de la función usando callocs y mallocs,
+// y luego se puede devolver el puntero al primer elemento del primer subarray.
 
 char** classify_chars_in_string_ret_pointer(char* string, char** vowels_and_cons) {
     if (string == NULL) {
@@ -61,17 +64,17 @@ char** classify_chars_in_string_ret_pointer(char* string, char** vowels_and_cons
     return vowels_and_cons;
 }
 
-// Devolver un struct que encapsule al array de arrays
+// Devolver un struct que encapsule a ambos arrays
 
 typedef struct {
-    char **array;
-    size_t size;
-} ArrayOfPointers;
+    char *vowels;
+    char *consonants;
+} VowelsAndConsonants;
 
-ArrayOfPointers classify_chars_in_string_ret_struct(char* string, char** vowels_and_cons) {
-    ArrayOfPointers result;
-    result.size = 2;
-    result.array = vowels_and_cons;
+VowelsAndConsonants classify_chars_in_string_ret_struct(char* string, char** vowels_and_cons) {
+    VowelsAndConsonants result;
+    result.vowels = calloc(64, sizeof(char));
+    result.consonants = calloc(64, sizeof(char));
 
     if (string == NULL) {
         return result;
@@ -82,9 +85,11 @@ ArrayOfPointers classify_chars_in_string_ret_struct(char* string, char** vowels_
     while (string[i] != '\0') {
         if (string[i] == 'a' || string[i] == 'e' || string[i] == 'i' || string[i] == 'o' || string[i] == 'u') {
             vowels_and_cons[0][v] = string[i];
+            result.vowels[v] = string[i];
             v++;
         } else {
             vowels_and_cons[1][c] = string[i];
+            result.consonants[v] = string[i];
             c++;
         }
         i++;
