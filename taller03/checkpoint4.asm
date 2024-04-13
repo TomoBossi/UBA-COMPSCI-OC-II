@@ -119,9 +119,13 @@ strPrint:
     pop rdi ;no push, pop rsi porque conocemos la implmenetación de strLen ... probablemente una mala práctica
 
     ;### syscall SIN USAR NINGÚN CALL para obtener el file descriptor a partir de pFile
+	;### Esta forma de resolver requiere hardcodear el offset al campo _fileno del struct _IO_FILE (el tipo de struct apuntado por pFile)
+    ;### Este offset puede cambiar en versiones futuras de la GNU C library (glibc), y el struct _IO_FILE y sus campos son "privados" (por eso el prefijo _)
+	;### Por lo tanto cualquiera de las demás alternativas de resolución es mejor que esta
+	;### Pero esta sin dudas es la más divertida. 
     mov rdx, rax ;longitud en rdx
     xchg rsi, rdi ;string pointer in rsi, stream pointer in rdi
-    mov rdi, [rdi+0x70] ;el file descriptor está offseteado por +0x70 en el file struct ... EN MI COMPU ? EN ESTE STRUCT PARTICULAR ¿¿¿???
+    mov rdi, [rdi+0x70] ;el file descriptor está offseteado por +0x70 en el file struct (https://sourceware.org/git/?p=glibc.git;a=blob;f=libio/bits/types/struct_FILE.h;h=7cdaae86f83ff4ef9577d978d5cc405d93f871b4;hb=HEAD#l46)
     cmp rdx, 0
     jnz print
     mov rsi, msg_if_null ;"NULL\n"
